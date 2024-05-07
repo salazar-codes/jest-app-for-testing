@@ -145,6 +145,10 @@ describe('Cart component',()=>{
         expect(spy2).toHaveBeenCalledTimes(1);
     });
 
+    // fdescribe funciona igual
+    // fit: para ejecutar solo este test por archivo
+    // it.only para ejecutar solo este test por archivo
+    // xit: skip test - aplica para describe
     it('_clearListCartBook works correctly',()=>{
         const spy1 = jest.spyOn(service, 'removeBooksFromCart').mockImplementation(() => null);
         component.listCartBook = listCartBook;

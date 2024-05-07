@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
 import { BookService } from '../../services/book.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -50,7 +50,8 @@ describe('Cart component',()=>{
             ],
             // Servicios que utiliza el componente
             providers:[
-                BookService
+                BookService,
+                //CartComponent
             ],
             schemas:[CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
         }).compileComponents();
@@ -80,6 +81,10 @@ describe('Cart component',()=>{
         expect(component).toBeTruthy();
         //expect(component).not.toBeTruthy();
     })
+
+    // it('should create', inject([CartComponent],(cartComponent2:CartComponent)=>{
+    //     expect(cartComponent2).toBeTruthy();
+    // }));
 
     it('getTotalPrice returns an amount',()=>{
         // Simulando la llamada al mètodo

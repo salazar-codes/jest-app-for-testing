@@ -97,7 +97,7 @@ describe('Cart component',()=>{
         
         expect(spy1).toHaveBeenCalledTimes(1);
         expect(spy2).toHaveBeenCalledTimes(1);
-    })
+    });
     
     it('onInputNumberChange minus correctly',()=>{
 
@@ -118,4 +118,39 @@ describe('Cart component',()=>{
         expect(spy2).toHaveBeenCalledTimes(1);
 
     })
+    
+    it('onClearBooks works correctly',()=>{
+        // vamos a mockear al método removeBooksFromCart que se llama en el privado
+        const spy1 = jest.spyOn(service, 'removeBooksFromCart').mockImplementation(() => null);
+        // agregar "as any" para espiar el método privado, en este caso no sea mockea porque queremos que se ejecuten las líneas del método privado, daría error el test del método removeBooksFromCart porque no se llamaría
+        const spy2 = jest.spyOn(component as any,'_clearListCartBook'); // espiar métodos privados
+        
+        component.listCartBook = listCartBook;
+        component.onClearBooks();
+        expect(component.listCartBook.length).toBe(0); // la lista se debe borrar
+        expect(spy1).toHaveBeenCalledTimes(1);
+        expect(spy2).toHaveBeenCalledTimes(1);
+    });
+
+    it('_clearListCartBook works correctly',()=>{
+        const spy1 = jest.spyOn(service, 'removeBooksFromCart').mockImplementation(() => null);
+        component.listCartBook = listCartBook;
+        component["_clearListCartBook"](); // Otra forma de ejecutar métodos privados - NO RECOMENDABLE?
+        expect(component.listCartBook.length).toBe(0);
+        expect(spy1).toHaveBeenCalledTimes(1);
+    });
+
+    // public onClearBooks(): void {
+    //     if (this.listCartBook && this.listCartBook.length > 0) {
+    //       this._clearListCartBook();
+    //     } else {
+    //        console.log("No books available");
+    //     }
+    //   }
+    
+    //   private _clearListCartBook() {
+    //     this.listCartBook = [];
+    //     this._bookService.removeBooksFromCart();
+    //   }
+
 })

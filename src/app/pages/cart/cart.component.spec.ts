@@ -3,8 +3,9 @@ import { CartComponent } from './cart.component';
 import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
 import { BookService } from '../../services/book.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Book } from 'src/app/models/book.model';
+import { By } from '@angular/platform-browser';
 
 const listCartBook: Book[] = [
     {
@@ -175,4 +176,26 @@ describe('Cart component',()=>{
     //     this._bookService.removeBooksFromCart();
     //   }
 
+    // EJEMPLOS DE TEST DE INTEGRACIÓN
+    it('title "cart is empty" is not displayed when there is a list of books',()=>{
+        component.listCartBook = listCartBook;
+
+        fixture.detectChanges(); // Le decimos a Angular que actualice su vista 
+        const debugElement: DebugElement = fixture.debugElement.query(By.css('#titleCartEmpty'));
+
+        expect(debugElement).toBeFalsy();
+    });
+
+    it('title "cart is empty" is displayed correctly when the list is empty',()=>{
+        component.listCartBook = [];
+        fixture.detectChanges(); // Le decimos a Angular que actualice su vista 
+        const debugElement: DebugElement = fixture.debugElement.query(By.css('#titleCartEmpty'));
+        expect(debugElement).toBeTruthy();
+
+        if(debugElement){
+            const element: HTMLElement = debugElement.nativeElement;
+            expect(element.innerHTML).toContain('The cart is empty');
+        }
+
+    });
 })

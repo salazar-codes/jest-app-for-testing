@@ -34,7 +34,7 @@ describe('Cart component',()=>{
 
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent> // Para extrar cosas del componente, un servicio por ejemplo
-
+    let service: BookService;
     // Eventos que se ejecutan antes de los test a ejecutar
     beforeEach(()=>{
         // Configuramos los tests
@@ -60,6 +60,7 @@ describe('Cart component',()=>{
         fixture = TestBed.createComponent(CartComponent);
         component = fixture.componentInstance;
         fixture.detectChanges(); // Hace lo que el ngOnInit
+        service = fixture.debugElement.injector.get(BookService); // Instanciando el servicio de prueba
     })
 
     it('should create',()=>{
@@ -74,17 +75,47 @@ describe('Cart component',()=>{
         expect(totalPrice).toBeGreaterThan(0);
         expect(totalPrice).not.toBe(0);
         expect(totalPrice).not.toBeNull();
-
     });
 
-    /**
-     * public getTotalPrice(listCartBook: Book[]): number {
-    let totalPrice = 0;
-    listCartBook.forEach((book: Book) => {
-      totalPrice += book.amount * book.price;
-    });
-    return totalPrice;
-  }
-     */
+    it('onInputNumberChange increments correctly',()=>{
 
+        const action = 'plus';
+        const book = listCartBook[0];
+
+        // Los espias, espian un método y comprueban que se llame bien. Nuestros test no deben llamar a otros servicios, hay que simularlo.
+        const spy1 = jest.spyOn(service, 'updateAmountBook').mockImplementation( () => null ); // No llama al servicio sino simula y devuelve lo de la función, en este caso, null
+
+        const spy2 = jest.spyOn(component, 'getTotalPrice').mockImplementation( () => null ); // ahora simulamos la llamada al método getTotalPrice del componente
+
+        expect(book.amount).toBe(2);
+
+        // Primero definir los espías antes de la llamada al método
+        component.onInputNumberChange(action, book);
+
+        // debe haber incrementado
+        expect(book.amount).toBe(3);
+        
+        expect(spy1).toHaveBeenCalledTimes(1);
+        expect(spy2).toHaveBeenCalledTimes(1);
+    })
+    
+    it('onInputNumberChange minus correctly',()=>{
+
+        const action = 'minus';
+        const book = listCartBook[0];
+
+        // Los espias, espian un método y comprueban que se llame bien. Nuestros test no deben llamar a otros servicios, hay que simularlo.
+        const spy1 = jest.spyOn(service, 'updateAmountBook').mockImplementation( () => null ); // No llama al servicio sino simula y devuelve lo de la función, en este caso, null
+
+        const spy2 = jest.spyOn(component, 'getTotalPrice').mockImplementation( () => null ); // ahora simulamos la llamada al método getTotalPrice del componente
+        expect(book.amount).toBe(3);
+        // Primero definir los espías antes de la llamada al método
+        component.onInputNumberChange(action, book);
+        expect(book.amount).toBe(2);
+        //expect(book.amount == 2).toBe(2); // Otra forma
+        
+        expect(spy1).toHaveBeenCalledTimes(1);
+        expect(spy2).toHaveBeenCalledTimes(1);
+
+    })
 })

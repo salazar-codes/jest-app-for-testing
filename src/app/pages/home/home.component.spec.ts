@@ -5,6 +5,7 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { BookService } from "../../services/book.service";
 import { Book } from "src/app/models/book.model";
 import { of } from "rxjs";
+import { DOCUMENT } from "@angular/common";
 
 const listCartBook: Book[] = [
     {
@@ -62,6 +63,10 @@ describe('Home Component',()=>{
                 {
                     provide: BookService,
                     useValue: bookServiceMock //mockeando un servicio custom, Forma adicional para evitar crear varios espías
+                },
+                {
+                    provide: Document,
+                    useExisting: DOCUMENT
                 }
             ],
             schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA],
@@ -88,8 +93,11 @@ describe('Home Component',()=>{
         expect(component.listBook).toEqual(listCartBook);
     })
 
-    // this.bookService.getBooks().pipe(take(1)).subscribe((resp: Book[]) => {
-    //     this.listBook = resp;
-    //   });
+    it('test alert',()=>{
+        const documentService = TestBed.inject(Document);
+        const windowAngular = documentService.defaultView
+        const spy = jest.spyOn(windowAngular,'alert').mockImplementation(()=>null)
+        //expect(spy).toHaveBeenCalled();
+    })
 
 });

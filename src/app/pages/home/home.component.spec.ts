@@ -30,6 +30,10 @@ const listCartBook: Book[] = [
     }
 ];
 
+const bookServiceMock = {
+    getBooks: () => of(listCartBook)
+}
+
 describe('Home Component',()=>{
 
     let component: HomeComponent;
@@ -44,7 +48,11 @@ describe('Home Component',()=>{
                 HomeComponent
             ],
             providers:[
-                BookService
+                //BookService
+                {
+                    provide: BookService,
+                    useValue: bookServiceMock //mockeando un servicio custom, Forma adicional para evitar crear varios espías
+                }
             ],
             schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA],
         })
@@ -62,10 +70,10 @@ describe('Home Component',()=>{
     
     it('getBook get books from subscription',()=>{
         const bookService = fixture.debugElement.injector.get(BookService);
-        const spy1 = jest.spyOn(bookService,'getBooks').mockReturnValueOnce(of(listCartBook)); // el espía devuelve un observable
+        //const spy1 = jest.spyOn(bookService,'getBooks').mockReturnValueOnce(of(listCartBook)); // el espía devuelve un observable
 
         component.getBooks();
-        expect(spy1).toHaveBeenCalledTimes(1);
+        //expect(spy1).toHaveBeenCalledTimes(1);
         expect(component.listBook.length).toBe(3);
         expect(component.listBook).toEqual(listCartBook);
     })

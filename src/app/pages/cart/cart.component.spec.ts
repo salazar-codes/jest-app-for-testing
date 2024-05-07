@@ -35,7 +35,8 @@ describe('Cart component',()=>{
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent> // Para extrar cosas del componente, un servicio por ejemplo
     let service: BookService;
-    // Eventos que se ejecutan antes de los test a ejecutar
+
+    // Eventos que se ejecutan antes de CADA TEST
     beforeEach(()=>{
         // Configuramos los tests
         TestBed.configureTestingModule({
@@ -55,13 +56,25 @@ describe('Cart component',()=>{
         }).compileComponents();
     })
 
+    // ngOnInit(): void {
+    //     this.listCartBook = this._bookService.getBooksFromCart();
+    //     this.totalPrice = this.getTotalPrice(this.listCartBook);
+    //   }
+
     beforeEach(()=>{
         // Instanciamos el componente
         fixture = TestBed.createComponent(CartComponent);
         component = fixture.componentInstance;
         fixture.detectChanges(); // Hace lo que el ngOnInit
         service = fixture.debugElement.injector.get(BookService); // Instanciando el servicio de prueba
-    })
+        jest.spyOn(service, 'getBooksFromCart').mockImplementation(()=> listCartBook); // mockeamos el método del ngOnInit necesario
+    });
+
+    // SE EJECUTA DESPUÉS DE CADA TEST
+    afterEach(()=>{
+        fixture.destroy();
+        jest.resetAllMocks();
+    });
 
     it('should create',()=>{
         expect(component).toBeTruthy();

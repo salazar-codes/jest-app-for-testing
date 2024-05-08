@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { HomeComponent } from "./home.component"
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Pipe, PipeTransform } from "@angular/core";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { BookService } from "../../services/book.service";
 import { Book } from "src/app/models/book.model";
 import { of } from "rxjs";
+import { DOCUMENT } from "@angular/common";
 
 const listCartBook: Book[] = [
     {
@@ -34,6 +35,15 @@ const bookServiceMock = {
     getBooks: () => of(listCartBook)
 }
 
+@Pipe({
+    name: 'reduceText'
+})
+class ReducePipeMock implements PipeTransform {
+    transform():string {
+        return '';
+    }
+}
+
 describe('Home Component',()=>{
 
     let component: HomeComponent;
@@ -45,13 +55,18 @@ describe('Home Component',()=>{
                 HttpClientTestingModule
             ],
             declarations:[
-                HomeComponent
+                HomeComponent,
+                ReducePipeMock // Pipe mockeado
             ],
             providers:[
                 //BookService
                 {
                     provide: BookService,
                     useValue: bookServiceMock //mockeando un servicio custom, Forma adicional para evitar crear varios espías
+                },
+                {
+                    provide: Document,
+                    useExisting: DOCUMENT
                 }
             ],
             schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA],
@@ -78,8 +93,11 @@ describe('Home Component',()=>{
         expect(component.listBook).toEqual(listCartBook);
     })
 
-    // this.bookService.getBooks().pipe(take(1)).subscribe((resp: Book[]) => {
-    //     this.listBook = resp;
-    //   });
+    it('test alert',()=>{
+        const documentService = TestBed.inject(Document);
+        const windowAngular = documentService.defaultView
+        const spy = jest.spyOn(windowAngular,'alert').mockImplementation(()=>null)
+        //expect(spy).toHaveBeenCalled();
+    })
 
 });
